@@ -1,5 +1,5 @@
 #include "../include/lib.h"
 
-kernel_main() {
+main() {
 	kprint("HELLO WORLD", 0);	
 };

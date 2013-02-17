@@ -1,5 +1,5 @@
 all:
-	nasm ./boot/bootloader.asm -o ./boot/bootloader.o
+	nasm -f aout ./boot/bootloader.asm -o ./boot/bootloader.o
 	gcc -c ./kernel/main.c ./lib/kprint.c 
 	mv ./kprint.o ./lib/kprint.o
 	mv ./main.o ./kernel/main.o

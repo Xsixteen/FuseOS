@@ -1,1 +1,6 @@
-./configure --enable-sb16  --enable-ne2000  --enable-all-optimizations --enable-cpu-level=6 --enable-x86-64 --enable-sse=2  --enable-pci   --enable-clgd54xx --enable-usb --enable-plugins --with-x11
+[BITS 16]       ; 16 bit code generation
+[ORG 0x7C00]	; Origin of the program. (Start position)
+
+; End matter
+times 510-($-$$) db 0
+dw 0xAA55

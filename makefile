@@ -1,7 +1,5 @@
 all:
-	nasm ./boot/bootloader.asm -o ./boot/bootloader.o
-	gcc -c ./kernel/main.c ./lib/kprint.c 
-	mv ./kprint.o ./lib/kprint.o
-	mv ./main.o ./kernel/main.o
-	ld -T Link.ld -o ./Images/fuseOS.bin ./boot/bootloader.o ./lib/kprint.o ./kernel/main.o
-	dd if=./Images/fuseOS.bin bs=512 of=./Images/fuseOS.img
+	nasm -felf32 ./boot/bootloader.asm -o ./boot/bootloader.o
+	gcc -m32 -c ./kernel/main.c
+	gcc -T linker.ld -o ./images/fuseOS.bin -ffreestanding -O2 -nostdlib ./boot/bootloader.o ./main.o
+	dd if=./images/fuseOS.bin bs=512 of=./images/fuseOS.img

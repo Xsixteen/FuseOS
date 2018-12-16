@@ -1,0 +1,14 @@
+;[BITS 32]    ; 32 bit code
+[BITS 16]       ; 16 bit code generation
+[ORG 0x7C00]	; Origin of the program. (Start position)
+[global start]
+[extern kernel_main]
+
+start:	     ; Main code label (Not really needed now but will be later)
+	call kernel_main	     ; Jump to the start of the instruction 
+	cli 		 	     ; Stop Interrupts
+	hlt		 	     ; Halt the CPU
+
+; End matter
+times 510-($-$$) db 0
+dw 0xAA55

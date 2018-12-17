@@ -1,4 +1,5 @@
 #include "io.h"
+#include "terminal.h"
 
 struct IDT_entry{
 	unsigned short int offset_lowerbits;
@@ -193,11 +194,8 @@ void irq0_handler(void) {
 }
  
 void irq1_handler(void) {
-	uint16_t* terminal_buffer;
-        terminal_buffer = (uint16_t*) 0xB8000;
-	terminal_buffer[index] = 'A';
-	index++;
-	  outb(0x20, 0x20); //EOI
+	terminal_keyboard_hook("press");
+	outb(0x20, 0x20); //EOI
 }
  
 void irq2_handler(void) {

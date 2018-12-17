@@ -11,6 +11,7 @@ struct IDT_entry{
 struct IDT_entry IDT[286];
 
 void idt_init(void) {
+	extern void setup_gdt();
         extern int load_idt();
         extern int irq0();
         extern int irq1();

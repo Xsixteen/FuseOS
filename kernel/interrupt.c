@@ -183,7 +183,7 @@ void idt_init(void) {
 	load_idt(idt_ptr);
  
 }
-
+int index = 0;
 /**
 	Interrupt Handlers
 **/
@@ -193,6 +193,10 @@ void irq0_handler(void) {
 }
  
 void irq1_handler(void) {
+	uint16_t* terminal_buffer;
+        terminal_buffer = (uint16_t*) 0xB8000;
+	terminal_buffer[index] = 'A';
+	index++;
 	  outb(0x20, 0x20); //EOI
 }
  

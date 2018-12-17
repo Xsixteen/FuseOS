@@ -25,4 +25,5 @@ void kernel_main(void)
 	terminal_writestring("Hello, kernel World!\n");
 	terminal_writestring("Enabling Interrupts\n");
 	idt_init();
+	while(1) { }
 }

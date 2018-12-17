@@ -184,7 +184,6 @@ void idt_init(void) {
 	load_idt(idt_ptr);
  
 }
-int index = 0;
 /**
 	Interrupt Handlers
 **/
@@ -194,8 +193,8 @@ void irq0_handler(void) {
 }
  
 void irq1_handler(void) {
-	terminal_keyboard_hook("press");
 	outb(0x20, 0x20); //EOI
+	terminal_keyboard_hook();
 }
  
 void irq2_handler(void) {

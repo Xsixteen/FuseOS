@@ -20,10 +20,10 @@ void kernel_main(void)
 {
 	/* Initialize terminal interface */
 	terminal_initialize();
+	idt_init();
 
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Hello, kernel World!\n");
 	terminal_writestring("Enabling Interrupts\n");
-	idt_init();
-	while(1) { }
+	for(;;);
 }

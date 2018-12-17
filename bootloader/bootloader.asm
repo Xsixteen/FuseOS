@@ -37,7 +37,31 @@ stack_top:
 ; doesn't make sense to return from this function as the bootloader is gone.
 ; Declare _start as a function symbol with the given symbol size.
 section .text
-global _start:function (_start.end - _start)
+
+	gdt:
+
+	gdt_null:
+	   dq 0
+	gdt_code:
+	   dw 0FFFFh
+	   dw 0
+	db 0
+	db 10011010b
+	db 11001111b
+	db 0
+	gdt_data:
+	   dw 0FFFFh
+	   dw 0
+	db 0
+	db 10010010b
+	db 11001111b
+	db 0
+	gdt_end
+
+	gdt_desc:
+	   dw gdt_end - gdt - 1
+	   dd gdt
+global _start
 _start:
 	; The bootloader has loaded us into 32-bit protected mode on a x86
 	; machine. Interrupts are disabled. Paging is disabled. The processor
@@ -49,12 +73,25 @@ _start:
 	; safeguards, no debugging mechanisms, only what the kernel provides
 	; itself. It has absolute and complete power over the
 	; machine.
+
+	; Setup GDT - Global Discriptor table 
+
+
+	lgdt [gdt_desc]
+	jmp 0x0008:fix_cs
+	fix_cs:
+	mov ax, 0x0010
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
  
 	; To set up a stack, we set the esp register to point to the top of our
 	; stack (as it grows downwards on x86 systems). This is necessarily done
 	; in assembly as languages such as C cannot function without a stack.
 	mov esp, stack_top
- 
+
 	; This is a good place to initialize crucial processor state before the
 	; high-level kernel is entered. It's best to minimize the early
 	; environment where crucial features are offline. Note that the

@@ -43,6 +43,9 @@ unsigned char kbdus[128] =
     0,	/* All other keys are undefined */
 };
 
+int commandBufferIndex = 0;
+unsigned char commandBuffer[128];
+
 size_t strlen(const char* str)
 {
 	size_t len = 0;
@@ -104,7 +107,7 @@ void terminal_putchar(char c)
 	} 
 }
 
-void terminal_write(const char* data, size_t size)
+void terminal_write(char* data, size_t size)
 {
 	for (size_t i = 0; i < size; i++)
 		terminal_putchar(data[i]);
@@ -113,10 +116,56 @@ void terminal_write(const char* data, size_t size)
 void terminal_writestring(const char* data)
 {
 	terminal_write(data, strlen(data));
+	update_cursor(terminal_column, terminal_row);
 }
 
 void terminal_keyboard_hook() {
         unsigned char scanCode     = inb(0x60);
 	char result 		   = kbdus[scanCode];
 	terminal_putchar(result);
+	if(result >= ' ') {
+		commandBuffer[commandBufferIndex] = result;
+		commandBufferIndex++;
+	}
+	if(result == '\r' || result =='\n') {
+		terminal_command();
+	}
+	update_cursor(terminal_column, terminal_row);
+}
+
+void update_cursor(int x, int y) {
+	uint16_t pos = y * VGA_WIDTH + x;
+ 
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (uint8_t) (pos & 0xFF));
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+}
+
+void terminal_command() {
+	terminal_writestring("Writing Command\n");
+	terminal_write(commandBuffer,128);
+	if(strcmp(commandBuffer,"cls") == 0) {
+		terminal_writestring("\ncls called");
+	}
+	terminal_writestring("\n");
+	clearCommandBuffer();
+}
+
+void clearCommandBuffer() {
+	for(int i = 0; i < 128; i++) {
+		commandBuffer[i]  = NULL;
+	}
+	commandBufferIndex=0;
+	
+}
+
+int strcmp(char * data1, char* data2) {
+	for(int i =0; i < strlen(data2); i++){
+		if(data1[i] != data2[i]) {
+			return -1;
+		}	
+	}
+	
+	return 0;
 }

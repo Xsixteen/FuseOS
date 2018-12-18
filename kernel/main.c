@@ -23,7 +23,7 @@ void kernel_main(void)
 	idt_init();
 
 	/* Newline support is left as an exercise. */
-	terminal_writestring("Hello, kernel World!\n");
+	terminal_writestring("FuseOS v.0.0.1\n");
 	terminal_writestring("Enabling Interrupts\n");
 	for(;;);
 }

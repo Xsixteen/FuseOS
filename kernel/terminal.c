@@ -105,6 +105,16 @@ void terminal_putchar(char c)
 		
 		terminal_column = 0;
 	} 
+	
+	if(c == '\b') {
+		if(terminal_column > 0) {
+			terminal_putentryat(' ', terminal_color, terminal_column-1, terminal_row);
+			terminal_column --;
+			update_cursor(terminal_column, terminal_row);
+			commandBuffer[commandBufferIndex-1] = NULL;
+			commandBufferIndex --;
+		}
+	}
 }
 
 void terminal_write(char* data, size_t size)
@@ -147,6 +157,7 @@ void terminal_command() {
 	terminal_write(commandBuffer,128);
 	if(strcmp(commandBuffer,"cls") == 0) {
 		terminal_writestring("\ncls called");
+		clear_screen();
 	}
 	terminal_writestring("\n");
 	clearCommandBuffer();
@@ -169,3 +180,19 @@ int strcmp(char * data1, char* data2) {
 	
 	return 0;
 }
+
+void clear_screen() {
+
+	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+	terminal_buffer = (uint16_t*) 0xB8000;
+	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			const size_t index = y * VGA_WIDTH + x;
+			terminal_buffer[index] = vga_entry(' ', terminal_color);
+		}
+	}
+	update_cursor(0,0);
+	terminal_column = 0;
+	terminal_row    = 0;
+}
+

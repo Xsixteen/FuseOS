@@ -39,20 +39,36 @@ stack_top:
 section .text
 
 	gdt:
-
+	; GDT Null Entry - First descriptor is always null
 	gdt_null:
-	   dq 0
+	dq 0
+	; GDT Kernel Code Segment Range 0 - 0xFFFF00000
 	gdt_code:
-	   dw 0FFFFh
-	   dw 0
+	dw 0FFFFh
+	dw 0
+	;Base Address of 0
 	db 0
+	;Type set to Execute Read - 0101 
+	;Segment flag is set as a code or data segment - 1
+	;Descriptor privilege level set to most privileged - 00
+	;Segment is  present in memory - 1
 	db 10011010b
+	;Segment limit - 1111
+	;Not Available for use by system software - 0
+	;64-bit code segment disabled - 0
+	;Default Operation Size 1=32-bit segment - 1
+	;Granularity indicates that segment limit is interpretted in 4kb units- 1
 	db 11001111b
+	;Base Address =0
 	db 0
 	gdt_data:
 	   dw 0FFFFh
 	   dw 0
 	db 0
+	;Type set to Read Write 0010 -
+	;Segment flag is set as a code or data segment - 1
+	;Descriptor privilege level set to most privileged - 00
+	;Segment is  present in memory - 1
 	db 10010010b
 	db 11001111b
 	db 0

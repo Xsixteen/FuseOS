@@ -1,7 +1,11 @@
 #include <stddef.h>
 #include <stdint.h>
+#include "../include/multiboot.h"
 #include "terminal.h"
+#include "global.h"
 #include "io.h"
+
+typedef void (*call_module_t)(void);
 
 unsigned char kbdus[128] =
 {
@@ -158,7 +162,11 @@ void terminal_command() {
 	if(strcmp(commandBuffer,"cls") == 0) {
 		terminal_writestring("\ncls called");
 		clear_screen();
+	} else if(strcmp(commandBuffer, "execute") == 0) {
+		terminal_writestring("\nExecuting Program");
+		execute_program();
 	}
+
 	terminal_writestring("\n");
 	clearCommandBuffer();
 }
@@ -196,3 +204,14 @@ void clear_screen() {
 	terminal_row    = 0;
 }
 
+void execute_program() {
+	multiboot_module_t*  address_of_module = (multiboot_module_t *) mbinfo->mods_addr;
+	if(mbinfo->mods_count == 1) {
+		terminal_writestring("\nModule Count = 1 Executing Sample Program\n");	
+		call_module_t start_program = (call_module_t) address_of_module->mod_start; 
+		start_program();
+	} else {	
+		terminal_writestring("\nModule Count unverified cannot start program\n");
+	}
+	
+}

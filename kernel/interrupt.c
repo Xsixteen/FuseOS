@@ -63,10 +63,17 @@ void idt_init(void) {
         outb(0xA1, 0x0);
  
 	irq0_address = (unsigned long)irq0; 
+	//First 16-bits are set to the interrupt function lower half address
 	IDT[32].offset_lowerbits = irq0_address & 0xffff;
+	//Selector is the offset of the GDT
 	IDT[32].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
+	//8 bits of zero byte
 	IDT[32].zero = 0;
+	//First byte 8 - Type contains handler is present 1, descriptor privilige level = 00 followed by a 0 constant
+	//Second byte E - Size of Gate is 32 bits / 1 (1= 32 bits, 0 = 16bits) followed by 1 1 0 constants
+	// 0x8e = 1000 1110
 	IDT[32].type_attr = 0x8e; /* INTERRUPT_GATE */
+	//Take only the top half address of the irq function location.
 	IDT[32].offset_higherbits = (irq0_address & 0xffff0000) >> 16;
  
 	irq1_address = (unsigned long)irq1; 
